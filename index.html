@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart E-Governance Service Portal</title>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+    <h2>Smart E-Governance Portal</h2>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="index.html#servicesPanel">Services</a>
+    <a href="track.html">Track Application</a>
+    <a href="admin-login.html">Admin</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Digital Government Services</h1>
+  <p>Apply for certificates, licenses and public services through a single online portal.</p>
+  <button onclick="document.getElementById('servicesPanel').scrollIntoView({behavior:'smooth'})">
+    Explore Services
+  </button>
+</section>
+
+
+<section class="home-features">
+  <div class="section-title">
+    <h2>Digital Governance in India</h2>
+    <p>Empowering citizens with modern government services</p>
+    <hr>
+  </div>
+  <div class="feature-container">
+    <div class="feature-box">
+      <img src="https://image2url.com/r2/default/images/1775897238485-e47cf6c4-6481-4772-8347-53e7e58f56ae.webp">
+      <p>Digital Document Vault</p>
+    </div>
+    <div class="feature-box">
+      <img src="https://image2url.com/r2/default/images/1774780545074-a889b003-5b4c-4026-a647-f53ed018d588.jpg">
+      <p>Online Citizen Services</p>
+    </div>
+    <div class="feature-box">
+      <img src="https://image2url.com/r2/default/images/1774982421426-a610316b-e2fb-4ca9-99bb-aa477f4c2974.jpg">
+      <p>Unified Identity Login</p>
+    </div>
+    <div class="feature-box">
+      <img src="https://image2url.com/r2/default/images/1774780781165-a393ed6d-3d0d-4433-a513-4d53d6220fd0.jpg">
+      <p>🇮🇳 Digital India Initiative</p>
+    </div>
+  </div>
+</section>
+
+<section id="servicesPanel">
+  <div class="section-title">
+    <h2>Explore Government Services</h2>
+    <p>Click on a service to begin your application</p>
+    <hr>
+  </div>
+  <div class="service-container">
+    <div class="service-box"><span class="service-icon"></span><h3>Birth Registration</h3><p>Apply for birth certificates through the online portal.</p><button onclick="location.href='birth.html'">Apply Now</button></div>
+    <div class="service-box"><span class="service-icon"></span><h3>Death Certificate</h3><p>Apply for death certificates through the online portal.</p><button onclick="location.href='death.html'">Apply Now</button></div>
+    <div class="service-box"><span class="service-icon"></span><h3>Aadhaar Management</h3><p>Update address, name or mobile number in Aadhaar.</p><button onclick="location.href='aadhaar.html'">Apply Now</button></div>
+    <div class="service-box"><span class="service-icon"></span><h3>Marriage Certificate</h3><p>Register marriages and get official certificates.</p><button onclick="location.href='marriage.html'">Apply Now</button></div>
+           <div class="service-box"><span class="service-icon"></span><h3>Healthcare Services</h3><p>Health insurance, vaccination and hospital services.</p><button onclick="location.href='healthcare.html'">Apply Now</button></div>
+    <div class="service-box"><span class="service-icon"></span><h3>Revenue & Taxation</h3><p>Property tax, income tax and land record services.</p><button onclick="location.href='tax.html'">Apply Now</button></div>
+        <div class="service-box"><span class="service-icon"></span><h3>Certificates & Licenses</h3><p>Driving license, income certificate and business license.</p><button onclick="location.href='license.html'">Apply Now</button></div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <h2>Contact Us</h2>
+  <div class="contact-info">
+    <p>📞 Phone: +91 1800 123 456 (Toll Free)</p>
+ <p>📧 Email: <a href="mailto:support@egovernance.gov.in">support@egovernance.gov.in</a></p>
+    <p>🏢 Address: Digital Governance Office, New Delhi, India</p>
+    <p>🕒 Working Hours: Monday to Friday, 9 AM – 6 PM</p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Smart E-Governance Service Portal | Government of India</p>
+</footer>
+
+</body>
+</html>

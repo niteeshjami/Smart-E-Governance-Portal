@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birth Registration - E-Governance Portal</title>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="form-page-body">
+<header>
+  <div class="logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+    <h2>Smart E-Governance Portal</h2>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="index.html#servicesPanel">Services</a>
+    <a href="track.html">Track Application</a>
+    <a href="admin-login.html">Admin</a>
+  </nav>
+</header>
+<div class="form-wrapper">
+  <div class="form-card">
+    <div class="form-card-header">
+      <span class="form-card-icon"></span>
+      <h2>Birth Registration</h2>
+      <p class="subtitle">Register a new birth and get a birth certificate</p>
+    </div>
+    <form onsubmit="handleSubmit(event)">
+      <div class="form-group"><label>Child Name</label><input type="text" id="name" placeholder="Enter child full name" required></div>
+      <div class="form-group"><label>Date of Birth</label><input type="date" id="dob" required></div>
+      <div class="form-group"><label>Father Name</label><input type="text" id="father" placeholder="Father full name"></div>
+      <div class="form-group"><label>Mother Name</label><input type="text" id="mother" placeholder="Mother full name"></div>
+      <div class="form-group">
+        <label>Upload Document (optional)</label>
+        <input type="file" id="userFile" accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+      <button type="submit" id="submitBtn" class="btn-submit">Submit Application</button>
+      <button type="button" class="btn-back" onclick="location.href='index.html#servicesPanel'">Back to Services</button>
+      <p id="msg"></p>
+    </form>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="form-submit.js"></script>
+<script>function handleSubmit(e){e.preventDefault();submitToFirebase({service:"Birth Registration",name:document.getElementById("name").value,dob:document.getElementById("dob").value,father:document.getElementById("father").value,mother:document.getElementById("mother").value});}</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login - E-Governance Portal</title>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-login-page">
+<div class="login-box">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+  <h2>Admin Login</h2>
+  <p class="sub">Authorised personnel only</p>
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+  <button class="btn-submit" onclick="login()" style="margin-bottom:10px;">Login</button>
+  <button class="btn-back" onclick="location.href='index.html'">Back to Home</button>
+  <p id="error"></p>
+</div>
+<script>
+function login() {
+  var u = document.getElementById("username").value;
+  var p = document.getElementById("password").value;
+  var err = document.getElementById("error");
+  if (u === "admin" && p === "admin123") {
+    window.location.href = "admin.html";
+  } else {
+    err.style.display = "block";
+    err.textContent = "Invalid username or password.";
+  }
+}
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("password").addEventListener("keydown", function(e) { if (e.key === "Enter") login(); });
+});
+</script>
+</body>
+</html>

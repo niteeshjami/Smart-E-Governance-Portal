@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Application - E-Governance Portal</title>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+    <h2>Smart E-Governance Portal</h2>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="index.html#servicesPanel">Services</a>
+    <a href="track.html">Track Application</a>
+    <a href="admin-login.html">Admin</a>
+  </nav>
+</header>
+<div class="track-page">
+  <div class="track-box">
+    <span style="font-size:40px;">🔍</span>
+    <h3>Track Your Application</h3>
+    <p class="sub">Enter your Application ID to check status</p>
+    <input id="appID" placeholder="e.g. GOV482910">
+    <button class="btn-submit" onclick="checkStatus()">Check Status</button>
+    <div id="result"></div>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+async function checkStatus() {
+  var id = document.getElementById("appID").value.trim();
+  var resultDiv = document.getElementById("result");
+  if (!id) { resultDiv.innerHTML = "<p style='color:red;'>Please enter an Application ID.</p>"; return; }
+  resultDiv.innerHTML = "<p style='color:blue;'>Checking... please wait.</p>";
+  try {
+    var doc = await db.collection("applications").doc(id).get();
+    if (!doc.exists) {
+      resultDiv.innerHTML = "<p style='color:red;font-weight:bold;'>Application not found. Please check your ID.</p>";
+      return;
+    }
+    var app = doc.data();
+    var html = '<div class="result-card">' +
+      '<div class="result-row"><strong>App ID</strong><span>' + app.id + '</span></div>' +
+      '<div class="result-row"><strong>Name</strong><span>' + app.name + '</span></div>' +
+      '<div class="result-row"><strong>Service</strong><span>' + app.service + '</span></div>' +
+      '<div class="result-row"><strong>Status</strong><span><span class="badge badge-' + app.status + '">' + app.status + '</span></span></div>';
+    if (app.reason) html += '<div class="result-row"><strong>Reason</strong><span style="color:red;">' + app.reason + '</span></div>';
+    html += '</div>';
+    if (app.certificate) html += '<a href="' + app.certificate + '" download class="cert-link">📥 Download Certificate</a>';
+    resultDiv.innerHTML = html;
+  } catch(e) {
+    resultDiv.innerHTML = "<p style='color:red;'>Error: " + e.message + "</p>";
+  }
+}
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("appID").addEventListener("keydown", function(e) { if (e.key === "Enter") checkStatus(); });
+});
+</script>
+</body>
+</html>

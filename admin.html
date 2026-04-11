@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - E-Governance Portal</title>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-body">
+<div class="admin-header">
+  <h2>Admin Dashboard - E-Governance Portal</h2>
+  <button class="logout-btn" onclick="location.href='index.html'">Logout</button>
+</div>
+<div class="admin-content">
+  <div class="stats-grid">
+    <div class="stat-card"><h3 id="statTotal">-</h3><p>Total Applications</p></div>
+    <div class="stat-card pending"><h3 id="statPending">-</h3><p>Pending</p></div>
+    <div class="stat-card approved"><h3 id="statApproved">-</h3><p>Approved</p></div>
+    <div class="stat-card rejected"><h3 id="statRejected">-</h3><p>Rejected</p></div>
+  </div>
+  <div class="filter-bar">
+    <label>Filter by Status:</label>
+    <select id="filterStatus" onchange="renderTable()">
+      <option value="">All</option>
+      <option value="Pending">Pending</option>
+      <option value="Approved">Approved</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+    <label>Search:</label>
+    <input type="text" id="searchInput" placeholder="Name or Application ID" oninput="renderTable()" style="width:200px;">
+  </div>
+  <div id="loading">Loading applications...</div>
+  <div class="admin-table-wrap" id="tableWrap" style="display:none;">
+    <table>
+      <thead>
+        <tr>
+          <th>App ID</th><th>Name</th><th>DOB / Date</th><th>Service</th>
+          <th>Submitted</th><th>Document</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableData"></tbody>
+    </table>
+  </div>
+  <div id="noData" class="no-data" style="display:none;">No applications found.</div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+var allApps = [];
+
+async function loadApplications() {
+  try {
+    var snap = await db.collection("applications").orderBy("submittedAt","desc").get();
+    allApps = snap.docs.map(function(d) { return Object.assign({docId: d.id}, d.data()); });
+    document.getElementById("loading").style.display = "none";
+    updateStats();
+    renderTable();
+  } catch(e) {
+    document.getElementById("loading").textContent = "Error loading data: " + e.message;
+  }
+}
+
+function updateStats() {
+  document.getElementById("statTotal").textContent   = allApps.length;
+  document.getElementById("statPending").textContent  = allApps.filter(function(a){return a.status==="Pending";}).length;
+  document.getElementById("statApproved").textContent = allApps.filter(function(a){return a.status==="Approved";}).length;
+  document.getElementById("statRejected").textContent = allApps.filter(function(a){return a.status==="Rejected";}).length;
+}
+
+function renderTable() {
+  var fs = document.getElementById("filterStatus").value;
+  var q  = document.getElementById("searchInput").value.toLowerCase();
+  var filtered = allApps.filter(function(a) {
+    return (!fs || a.status === fs) && (!q || a.name.toLowerCase().includes(q) || a.id.toLowerCase().includes(q));
+  });
+  var tbody = document.getElementById("tableData");
+  tbody.innerHTML = "";
+  if (!filtered.length) {
+    document.getElementById("tableWrap").style.display = "none";
+    document.getElementById("noData").style.display = "block";
+    return;
+  }
+  document.getElementById("tableWrap").style.display = "block";
+  document.getElementById("noData").style.display = "none";
+  filtered.forEach(function(app) {
+    var date = app.submittedAt ? new Date(app.submittedAt.seconds * 1000).toLocaleDateString("en-IN") : "N/A";
+    tbody.innerHTML += '<tr>' +
+      '<td><b>' + app.id + '</b></td>' +
+      '<td>' + app.name + '</td>' +
+      '<td>' + (app.dob || app.date || "-") + '</td>' +
+      '<td>' + app.service + '</td>' +
+      '<td>' + date + '</td>' +
+      '<td>' + (app.userFile ? '<a href="' + app.userFile + '" download>Download</a>' : '-') + '</td>' +
+      '<td class="status-' + app.status + '">' + app.status + (app.reason ? '<br><small style="color:#888;">' + app.reason + '</small>' : '') + '</td>' +
+      '<td>' +
+        '<button class="approve-btn" onclick="setStatus(\'' + app.id + '\',\'Approved\',\'\')">Approve</button> ' +
+        '<button class="reject-btn" onclick="rejectApp(\'' + app.id + '\')">Reject</button><br>' +
+        '<small>Upload Cert: <input type="file" style="font-size:11px;width:130px;" onchange="uploadCert(event,\'' + app.id + '\')"></small>' +
+        (app.certificate ? '<br><a href="' + app.certificate + '" download style="color:green;font-size:12px;">Cert Ready</a>' : '') +
+        '<br><button class="delete-btn" onclick="deleteApp(\'' + app.id + '\')" style="margin-top:4px;">Delete</button>' +
+      '</td></tr>';
+  });
+}
+
+async function setStatus(id, status, reason) {
+  await db.collection("applications").doc(id).update({status: status, reason: reason});
+  var a = allApps.find(function(x){return x.id===id;});
+  if (a) { a.status = status; a.reason = reason; }
+  updateStats(); renderTable();
+}
+
+function rejectApp(id) {
+  var r = prompt("Enter rejection reason:");
+  if (r !== null) setStatus(id, "Rejected", r);
+}
+
+async function uploadCert(e, id) {
+  var file = e.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = async function() {
+    await db.collection("applications").doc(id).update({certificate: reader.result});
+    var a = allApps.find(function(x){return x.id===id;});
+    if (a) a.certificate = reader.result;
+    alert("Certificate uploaded!"); renderTable();
+  };
+  reader.readAsDataURL(file);
+}
+
+async function deleteApp(id) {
+  if (!confirm("Delete this application?")) return;
+  await db.collection("applications").doc(id).delete();
+  allApps = allApps.filter(function(a){return a.id!==id;});
+  updateStats(); renderTable();
+}
+
+loadApplications();
+</script>
+</body>
+</html>
